@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - {{ username }}{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <!-- Header -->
+    <div class="chat-header glassmorphism">
+        <div class="header-left">
+            <div class="user-avatar">{{ username[0].upper() }}</div>
+            <div>
+                <h5 class="mb-0">{{ username }}</h5>
+                <small class="status-text" id="connectionStatus">
+                    <span class="status-dot status-connecting"></span>
+                    Connexion...
+                </small>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="badge bg-success me-2" id="encryptionBadge">
+                <span class="spinner-border spinner-border-sm me-1"></span>
+                Établissement du chiffrement...
+            </span>
+            <button class="btn btn-sm btn-outline-danger" onclick="logout()">
+                🚪 Déconnexion
+            </button>
+            <button class="theme-toggle-chat" id="themeToggleChat" title="Changer le thème">
+                <span class="theme-icon">🌙</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="messages-container" id="messagesContainer">
+        <div class="messages-welcome">
+            <div class="welcome-icon">💬</div>
+            <h4>Bienvenue dans le chat sécurisé !</h4>
+            <p class="text-muted">Vos messages sont chiffrés de bout en bout avec AES-256-GCM</p>
+            <div class="encryption-info">
+                <small>🔐 Échange de clés ECDH en cours...</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-text">est en train d'écrire...</span>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area glassmorphism">
+        <form id="messageForm" class="message-form">
+            <input type="text" class="form-control message-input" id="messageInput"
+                placeholder="Tapez votre message (chiffré de bout en bout)..." autocomplete="off" disabled>
+            <button type="submit" class="btn btn-primary btn-send" id="sendButton" disabled>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Hidden data -->
+<div id="appData" data-username="{{ username }}" data-csrf-token="{{ csrf_token }}" style="display: none;">
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Socket.IO Client -->
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+<!-- Crypto Client -->
+<script src="{{ url_for('static', filename='js/crypto-client.js') }}"></script>
+
+<!-- Main App -->
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+<script>
+    function logout() {
+        if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+            window.location.href = "{{ url_for('main.logout') }}";
+        }
+    }
+</script>
+{% endblock %}

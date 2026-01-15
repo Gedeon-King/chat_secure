@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - Secure Chat{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card glassmorphism">
+        <div class="text-center mb-4">
+            <div class="lock-icon">🔒</div>
+            <h1 class="app-title">Secure LAN Chat</h1>
+            <p class="app-subtitle">Communication chiffrée de bout en bout</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('main.login') }}" id="loginForm">
+            <div class="mb-4">
+                <label for="username" class="form-label">
+                    <span class="label-icon">👤</span> Nom d'utilisateur
+                </label>
+                <input type="text" class="form-control modern-input" id="username" name="username"
+                    placeholder="Entrez votre pseudonyme" required pattern="[a-zA-Z0-9_]{3,20}"
+                    title="3-20 caractères alphanumériques ou underscore" autocomplete="off">
+                <small class="form-text text-muted">3-20 caractères (lettres, chiffres, _)</small>
+            </div>
+
+            <div class="mb-4">
+                <label for="shared_secret" class="form-label">
+                    <span class="label-icon">🔑</span> Secret partagé
+                </label>
+                <input type="password" class="form-control modern-input" id="shared_secret" name="shared_secret"
+                    placeholder="Entrez le secret partagé" required minlength="6">
+                <small class="form-text text-muted">À partager avec votre interlocuteur (min 6 caractères)</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-modern w-100 mb-3">
+                <span class="btn-text">Se connecter</span>
+                <span class="btn-loader" style="display: none;">
+                    <span class="spinner-border spinner-border-sm"></span> Connexion...
+                </span>
+            </button>
+        </form>
+
+        <div class="alert alert-info security-notice">
+            <strong>⚠️ Important:</strong>
+            <ul class="mb-0 mt-2">
+                <li>Le premier utilisateur à se connecter définit le secret</li>
+                <li>Partagez le secret via un canal sécurisé (appel, SMS, en personne)</li>
+                <li>Toutes les communications seront chiffrées (AES-256)</li>
+            </ul>
+        </div>
+
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                <span class="badge bg-success">🔐 Chiffrement ECDH + AES-256-GCM</span>
+            </small>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" title="Changer le thème">
+        <span class="theme-icon">🌙</span>
+    </button>
+</div>
+
+<style>
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 480px;
+        padding: 40px;
+        border-radius: 20px;
+        animation: fadeInUp 0.6s ease;
+    }
+
+    .lock-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        animation: pulse 2s infinite;
+    }
+
+    .app-title {
+        font-size: 32px;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+    }
+
+    .app-subtitle {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+
+    .security-notice {
+        font-size: 13px;
+        border: none;
+        background: var(--info-bg);
+        border-left: 4px solid var(--info-color);
+    }
+
+    .security-notice ul {
+        padding-left: 20px;
+        font-size: 12px;
+    }
+
+    .security-notice li {
+        margin-bottom: 4px;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+    // Gestion du formulaire de connexion
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        const btnText = this.querySelector('.btn-text');
+        const btnLoader = this.querySelector('.btn-loader');
+
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline-block';
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+    });
+</script>
+{% endblock %}
