@@ -137,7 +137,7 @@ class MessageValidator:
         Valide une clé publique
         
         Args:
-            public_key: Clé publique en base64 URL-safe (sans padding)
+            public_key: Clé publique en base64
             
         Returns:
             True si valide, False sinon
@@ -145,14 +145,12 @@ class MessageValidator:
         if not public_key or not isinstance(public_key, str):
             return False
         
-        # Vérifier que c'est du base64 URL-safe valide (sans padding obligatoire)
-        # Accepte les caractères: A-Z, a-z, 0-9, -, _ (URL-safe)
-        if not re.match(r'^[A-Za-z0-9_-]+$', public_key):
+        # Vérifier que c'est du base64 valide
+        if not re.match(r'^[A-Za-z0-9_-]+=*$', public_key):
             return False
         
         # Vérifier une longueur raisonnable (clé ECDH P-256 = 65 bytes non compressée)
-        # En base64 URL-safe: ~87 caractères (sans padding)
-        # Accepter une petite marge
+        # En base64: ~88 caractères
         if len(public_key) < 80 or len(public_key) > 100:
             return False
         
